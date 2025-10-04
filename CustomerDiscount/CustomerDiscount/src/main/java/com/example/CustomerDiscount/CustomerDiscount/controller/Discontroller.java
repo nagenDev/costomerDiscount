@@ -38,10 +38,28 @@ public class Discontroller {
 
 
 
-    @PutMapping("id/{id}/did/{did}")
+    @PutMapping("ied/{id}/did/{did}")
     public void updateTheDiscount(@PathVariable Long id,@PathVariable Long did,@RequestBody DiscountEntity newUser) {
         discountService.save(id, newUser);
 
     }
 
+
+    @PutMapping("/id/{id}/did/{did}")
+    public void updateTheDiscountCouponOnly(@PathVariable Long id,@PathVariable Long did,@RequestBody DiscountEntity newUser) {
+        CostomerEntity costomer = costomerService.getBYId(id);
+        List<DiscountEntity> discount = costomer.getDiscountEntities();
+        DiscountEntity toUpdate = null;
+        for(DiscountEntity d:discount) {
+            if(d.getId().equals(did)) {
+                toUpdate = d;
+                break;
+            }
+        }
+        toUpdate.setCouponCode(newUser.getCouponCode() != null? newUser.getCouponCode() : toUpdate.getCouponCode());
+        discountService.save(id, toUpdate);
+
+    }
+
 }
+
